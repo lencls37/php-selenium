@@ -363,6 +363,22 @@ Demonstrates all browser control features including:
 - Navigation
 - Waits
 
+### Practical Examples
+
+**Form Filling:**
+```bash
+php examples/form_filling_example.php
+```
+Shows how to fill and submit forms.
+
+**Web Scraping:**
+```bash
+php examples/web_scraping_example.php
+```
+Demonstrates data extraction from web pages.
+
+See the [examples directory](examples/) for more examples.
+
 ### Driver Setup Example
 ```bash
 php example.php
