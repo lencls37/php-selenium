@@ -341,6 +341,10 @@ $driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
 - ✓ Modifies permission requests
 - ✓ Custom user agent support
 
+## WebDriver Protocol Support
+
+This library implements the complete W3C WebDriver protocol. See [WEBDRIVER_PROTOCOL.md](WEBDRIVER_PROTOCOL.md) for detailed documentation of all supported endpoints and features.
+
 ## How It Works
 
 1. **Chrome Detection**: The library first checks if Chrome/Chromium is installed on your system
