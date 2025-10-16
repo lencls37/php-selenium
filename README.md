@@ -201,8 +201,10 @@ $driver->back();
 $driver->forward();
 $driver->refresh();
 
-// Get page source
+// Get page source / HTML code
 $html = $driver->getPageSource();
+// Or use the alias
+$html = $driver->getHtml();
 ```
 
 ### JavaScript Execution
@@ -276,6 +278,15 @@ $driver->deleteAllCookies();
 ### Waits
 
 ```php
+// Wait for page to fully load (document.readyState === 'complete')
+$driver->waitForPageLoad(30); // Wait up to 30 seconds
+
+// Wait for DOM to be ready (document.readyState === 'interactive' or 'complete')
+$driver->waitForPageReady(30);
+
+// Wait for jQuery/AJAX requests to complete
+$driver->waitForAjax(30);
+
 // Wait for element to be present
 $element = $driver->waitForElement('#dynamic-content', 10);
 
@@ -414,6 +425,12 @@ Demonstrates data extraction from web pages.
 php examples/stealth_mode_example.php
 ```
 Shows how to bypass bot detection with stealth mode (enabled by default).
+
+**Page Load Wait:**
+```bash
+php examples/page_load_wait_example.php
+```
+Demonstrates how to wait for page load, get HTML content, and use various wait methods.
 
 See the [examples directory](examples/) for more examples.
 
