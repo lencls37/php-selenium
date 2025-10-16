@@ -1,0 +1,23 @@
+{
+    "name": "lencls37/php-selenium",
+    "description": "Selenium PHP library with automatic Chrome/ChromeDriver setup",
+    "type": "library",
+    "require": {
+        "php": ">=8.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "ext-zip": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lencls37\\PhpSelenium\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lencls37"
+        }
+    ],
+    "minimum-stability": "stable"
+}
