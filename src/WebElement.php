@@ -80,6 +80,19 @@ class WebElement
     }
 
     /**
+     * Get a DOM property value
+     * 
+     * @param string $name Property name
+     * @return mixed Property value
+     */
+    public function getProperty(string $name): mixed
+    {
+        $sessionId = $this->driver->getSessionId();
+        $response = $this->driver->request('GET', "/session/{$sessionId}/element/{$this->elementId}/property/{$name}");
+        return $response['value'] ?? null;
+    }
+
+    /**
      * Get a CSS property value
      * 
      * @param string $name CSS property name

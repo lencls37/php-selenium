@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 
 echo "=== Testing PHP Selenium Driver ===\n\n";
 
 try {
-    echo "1. Creating SeleniumDriver instance...\n";
-    $driver = new SeleniumDriver();
+    echo "1. Creating ChromeDriver instance...\n";
+    $driver = new ChromeDriver();
     
     echo "2. Initializing driver (detecting Chrome and downloading ChromeDriver)...\n";
     $driver->initialize();

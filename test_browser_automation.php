@@ -8,7 +8,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 echo "═══════════════════════════════════════════════════════════════\n";

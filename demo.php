@@ -12,8 +12,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
-use Lencls37\PhpSelenium\FirefoxDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
+use Lencls37\PhpSelenium\GeckoDriver;
 use Lencls37\PhpSelenium\EdgeDriver;
 
 echo "╔════════════════════════════════════════════════════════╗\n";
@@ -45,7 +45,7 @@ printInfo("Initializing Chrome/Chromium driver...");
 echo "\n";
 
 try {
-    $chromeDriver = new SeleniumDriver();
+    $chromeDriver = new ChromeDriver();
     
     // Get Chrome path before initialization
     $chromePath = $chromeDriver->getChromePath();
@@ -77,7 +77,7 @@ printInfo("Checking for Firefox installation...");
 echo "\n";
 
 try {
-    $firefoxDriver = new FirefoxDriver();
+    $firefoxDriver = new GeckoDriver();
     $firefoxPath = $firefoxDriver->getBrowserPath();
     
     if ($firefoxPath) {

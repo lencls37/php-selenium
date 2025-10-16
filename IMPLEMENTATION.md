@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a PHP 8+ Selenium library that provides automatic browser and driver setup with cross-platform support. The library handles Chrome/Chromium detection, offers interactive installation, and includes optional Firefox and Edge support.
+This is a PHP 8+ Selenium library that provides automatic browser and driver setup with cross-platform support. The library handles Chrome/Chromium detection, offers interactive installation, and includes optional Firefox/Gecko driver support.
 
 ## Project Structure
 
@@ -11,8 +11,7 @@ php-selenium/
 ├── src/
 │   ├── SeleniumDriver.php      # Main Chrome/Chromium driver class
 │   ├── BrowserDriver.php       # Abstract base class for all drivers
-│   ├── FirefoxDriver.php       # Firefox/GeckoDriver implementation
-│   └── EdgeDriver.php          # Microsoft Edge driver implementation
+│   ├── GeckoDriver.php       # Firefox/GeckoDriver implementation
 ├── composer.json               # Dependencies and autoload config
 ├── .gitignore                  # Excludes vendor/, drivers/, chrome/
 ├── README.md                   # Main documentation
@@ -65,14 +64,12 @@ Chrome indirilsin mi? (y/n):
 - Interactive download
 - Full automation
 
-**Firefox (FirefoxDriver):**
+**Firefox (GeckoDriver):**
 - Detection in standard paths
 - GeckoDriver download from GitHub releases
 - Requires manual Firefox installation
 
-**Edge (EdgeDriver):**
 - Detection in standard paths
-- EdgeDriver download from Microsoft CDN
 - Requires manual Edge installation
 
 ## Technical Implementation
@@ -81,8 +78,7 @@ Chrome indirilsin mi? (y/n):
 ```
 BrowserDriver (abstract)
     ├── SeleniumDriver (Chrome)
-    ├── FirefoxDriver (Firefox)
-    └── EdgeDriver (Edge)
+    ├── GeckoDriver (Firefox)
 ```
 
 ### Dependencies
@@ -167,8 +163,6 @@ private function downloadChromeDriver(string $version): void
 ✓ Chrome version: 140.0.7339.207
 ✓ Firefox found at: /usr/bin/firefox
 ✓ Firefox version: 143.0
-✓ Edge found at: /usr/bin/microsoft-edge
-✓ Edge version: 140.0.3485.94
 ✓ All classes loaded successfully
 ✓ All methods available
 ```
@@ -288,7 +282,7 @@ This implementation provides a complete, production-ready Selenium library for P
 - ✅ Automatic browser detection
 - ✅ Interactive installation
 - ✅ Cross-platform compatibility (Windows/Linux/macOS)
-- ✅ Multi-browser support (Chrome/Firefox/Edge)
+- ✅ Multi-browser support (Chrome/Firefox)
 - ✅ Comprehensive documentation
 - ✅ Working examples and tests
 - ✅ Proper error handling

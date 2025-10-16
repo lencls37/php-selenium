@@ -8,7 +8,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 
 echo "═══════════════════════════════════════════════════════════════\n";
 echo "    INTERACTIVE CHROME INSTALLATION DEMO\n";
@@ -29,7 +29,7 @@ echo "────────────────────────�
 echo "In this environment, Chrome IS already installed, so you'll see:\n\n";
 
 try {
-    $driver = new SeleniumDriver();
+    $driver = new ChromeDriver();
     
     // Show what Chrome path was found
     $chromePath = $driver->getChromePath();

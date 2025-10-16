@@ -63,6 +63,28 @@ class WebDriver
     }
 
     /**
+     * Get WebDriver status
+     * 
+     * @return array Status information
+     */
+    public function getStatus(): array
+    {
+        $response = $this->request('GET', '/status');
+        return $response['value'] ?? [];
+    }
+
+    /**
+     * Get all active sessions
+     * 
+     * @return array Array of active sessions
+     */
+    public function getSessions(): array
+    {
+        $response = $this->request('GET', '/sessions');
+        return $response['value'] ?? [];
+    }
+
+    /**
      * Start the WebDriver process
      */
     private function startDriver(): void
@@ -528,6 +550,104 @@ class WebDriver
     }
 
     /**
+     * Get window rect (position and size)
+     * 
+     * @return array ['x' => int, 'y' => int, 'width' => int, 'height' => int]
+     */
+    public function getWindowRect(): array
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/window/rect");
+        return [
+            'x' => $response['value']['x'] ?? 0,
+            'y' => $response['value']['y'] ?? 0,
+            'width' => $response['value']['width'] ?? 0,
+            'height' => $response['value']['height'] ?? 0
+        ];
+    }
+
+    /**
+     * Set window rect (position and size)
+     * 
+     * @param int|null $x Window x position
+     * @param int|null $y Window y position
+     * @param int|null $width Window width
+     * @param int|null $height Window height
+     */
+    public function setWindowRect(?int $x = null, ?int $y = null, ?int $width = null, ?int $height = null): void
+    {
+        $data = [];
+        if ($x !== null) $data['x'] = $x;
+        if ($y !== null) $data['y'] = $y;
+        if ($width !== null) $data['width'] = $width;
+        if ($height !== null) $data['height'] = $height;
+        
+        $this->request('POST', "/session/{$this->sessionId}/window/rect", $data);
+    }
+
+    /**
+     * Get current window handle
+     * 
+     * @return string Window handle
+     */
+    public function getWindowHandle(): string
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/window");
+        return $response['value'] ?? '';
+    }
+
+    /**
+     * Get all window handles
+     * 
+     * @return array Array of window handles
+     */
+    public function getWindowHandles(): array
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/window/handles");
+        return $response['value'] ?? [];
+    }
+
+    /**
+     * Switch to window by handle
+     * 
+     * @param string $handle Window handle
+     */
+    public function switchToWindow(string $handle): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/window", [
+            'handle' => $handle
+        ]);
+        // Re-apply stealth mode after switching windows
+        $this->applyStealthMode();
+    }
+
+    /**
+     * Switch to frame by index, element, or null (default content)
+     * 
+     * @param int|WebElement|null $frame Frame index, element, or null for default content
+     */
+    public function switchToFrame(int|WebElement|null $frame): void
+    {
+        $data = [];
+        if ($frame === null) {
+            $data['id'] = null;
+        } elseif (is_int($frame)) {
+            $data['id'] = $frame;
+        } elseif ($frame instanceof WebElement) {
+            $data['id'] = $frame->toArray();
+        }
+        
+        $this->request('POST', "/session/{$this->sessionId}/frame", $data);
+    }
+
+    /**
+     * Switch to parent frame
+     */
+    public function switchToParentFrame(): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/frame/parent");
+    }
+
+    /**
      * Add a cookie
      * 
      * @param array $cookie Cookie data
@@ -556,6 +676,18 @@ class WebDriver
     public function deleteAllCookies(): void
     {
         $this->request('DELETE', "/session/{$this->sessionId}/cookie");
+    }
+
+    /**
+     * Get a specific cookie
+     * 
+     * @param string $name Cookie name
+     * @return array|null Cookie data or null if not found
+     */
+    public function getCookie(string $name): ?array
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/cookie/{$name}");
+        return $response['value'] ?? null;
     }
 
     /**
@@ -653,6 +785,73 @@ class WebDriver
     }
 
     /**
+     * Set timeouts for page load, script execution, and implicit wait
+     * 
+     * @param int|null $implicitMs Implicit wait timeout in milliseconds
+     * @param int|null $pageLoadMs Page load timeout in milliseconds
+     * @param int|null $scriptMs Script execution timeout in milliseconds
+     */
+    public function setTimeouts(?int $implicitMs = null, ?int $pageLoadMs = null, ?int $scriptMs = null): void
+    {
+        $data = [];
+        if ($implicitMs !== null) $data['implicit'] = $implicitMs;
+        if ($pageLoadMs !== null) $data['pageLoad'] = $pageLoadMs;
+        if ($scriptMs !== null) $data['script'] = $scriptMs;
+        
+        $this->request('POST', "/session/{$this->sessionId}/timeouts", $data);
+    }
+
+    /**
+     * Get timeouts
+     * 
+     * @return array Timeout values
+     */
+    public function getTimeouts(): array
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/timeouts");
+        return $response['value'] ?? [];
+    }
+
+    /**
+     * Get alert text
+     * 
+     * @return string Alert text
+     */
+    public function getAlertText(): string
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}/alert/text");
+        return $response['value'] ?? '';
+    }
+
+    /**
+     * Accept alert (click OK)
+     */
+    public function acceptAlert(): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/alert/accept");
+    }
+
+    /**
+     * Dismiss alert (click Cancel)
+     */
+    public function dismissAlert(): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/alert/dismiss");
+    }
+
+    /**
+     * Send text to alert (for prompt dialogs)
+     * 
+     * @param string $text Text to send
+     */
+    public function sendAlertText(string $text): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/alert/text", [
+            'text' => $text
+        ]);
+    }
+
+    /**
      * Wait for page to fully load (document.readyState === 'complete')
      * 
      * @param int $timeoutSeconds Timeout in seconds
@@ -741,6 +940,37 @@ class WebDriver
     public function getHtml(): string
     {
         return $this->getPageSource();
+    }
+
+    /**
+     * Perform actions (keyboard or mouse)
+     * 
+     * @param array $actions Actions to perform (W3C actions format)
+     */
+    public function performActions(array $actions): void
+    {
+        $this->request('POST', "/session/{$this->sessionId}/actions", [
+            'actions' => $actions
+        ]);
+    }
+
+    /**
+     * Release all actions (reset pressed keys and buttons)
+     */
+    public function releaseActions(): void
+    {
+        $this->request('DELETE', "/session/{$this->sessionId}/actions");
+    }
+
+    /**
+     * Get session capabilities
+     * 
+     * @return array Session capabilities
+     */
+    public function getCapabilities(): array
+    {
+        $response = $this->request('GET', "/session/{$this->sessionId}");
+        return $response['value'] ?? [];
     }
 
     /**

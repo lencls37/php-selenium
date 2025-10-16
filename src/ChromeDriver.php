@@ -7,7 +7,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use ZipArchive;
 use RuntimeException;
 
-class SeleniumDriver
+/**
+ * Chrome driver implementation
+ */
+class ChromeDriver
 {
     private string $driverPath;
     private string $chromePath;
