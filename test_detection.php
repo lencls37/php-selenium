@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
-use Lencls37\PhpSelenium\FirefoxDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
+use Lencls37\PhpSelenium\GeckoDriver;
 use Lencls37\PhpSelenium\EdgeDriver;
 
 echo "=== PHP Selenium Driver - Browser Detection Test ===\n\n";
@@ -12,7 +12,7 @@ echo "=== PHP Selenium Driver - Browser Detection Test ===\n\n";
 echo "1. Testing Chrome/Chromium Detection:\n";
 echo str_repeat("-", 50) . "\n";
 try {
-    $chromeDriver = new SeleniumDriver();
+    $chromeDriver = new ChromeDriver();
     
     // Use reflection to access private methods for testing
     $reflection = new ReflectionClass($chromeDriver);
@@ -52,7 +52,7 @@ echo "\n";
 echo "2. Testing Firefox Detection:\n";
 echo str_repeat("-", 50) . "\n";
 try {
-    $firefoxDriver = new FirefoxDriver();
+    $firefoxDriver = new GeckoDriver();
     
     $firefoxPath = $firefoxDriver->getBrowserPath();
     if ($firefoxPath) {
@@ -107,9 +107,9 @@ echo "4. Testing Class Structure:\n";
 echo str_repeat("-", 50) . "\n";
 
 $classes = [
-    'Lencls37\PhpSelenium\SeleniumDriver',
+    'Lencls37\PhpSelenium\ChromeDriver',
     'Lencls37\PhpSelenium\BrowserDriver',
-    'Lencls37\PhpSelenium\FirefoxDriver',
+    'Lencls37\PhpSelenium\GeckoDriver',
     'Lencls37\PhpSelenium\EdgeDriver',
 ];
 
@@ -128,7 +128,7 @@ echo "5. Testing Required Methods:\n";
 echo str_repeat("-", 50) . "\n";
 
 $requiredMethods = ['initialize', 'getDriverPath', 'getChromePath'];
-$chromeDriver = new SeleniumDriver();
+$chromeDriver = new ChromeDriver();
 
 foreach ($requiredMethods as $method) {
     if (method_exists($chromeDriver, $method)) {

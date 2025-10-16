@@ -10,7 +10,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 echo "═══════════════════════════════════════════════════════════════\n";
@@ -20,7 +20,7 @@ echo "════════════════════════�
 try {
     // Step 1: Initialize ChromeDriver
     echo "1. Setting up ChromeDriver...\n";
-    $seleniumDriver = new SeleniumDriver();
+    $seleniumDriver = new ChromeDriver();
     $seleniumDriver->initialize();
     
     $driverPath = $seleniumDriver->getDriverPath();

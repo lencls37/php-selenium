@@ -7,17 +7,20 @@ Selenium PHP library with automatic Chrome/ChromeDriver setup and multi-browser 
 - 🚀 Automatic Chrome/Chromium detection and installation
 - 📦 Automatic ChromeDriver download and setup
 - 🌐 Cross-platform support (Windows, Linux, macOS)
-- 🔧 Optional Firefox and Edge support
+- 🔧 Firefox/Gecko driver support
 - 💬 Interactive installation prompts
 - ⚡ Version matching between browser and driver
 - 🎮 **Full browser automation** - Control the browser like Selenium
 - 🔍 **Element finding** - CSS selectors, XPath, ID, name, class, etc.
-- 🖱️ **Element interaction** - Click, type, submit forms
+- 🖱️ **Element interaction** - Click, type, submit forms, get properties
 - 📸 **Screenshots** - Full page and element screenshots
 - 🍪 **Cookie management** - Add, get, delete cookies
-- 🪟 **Window control** - Resize, maximize, minimize
-- ⏱️ **Smart waits** - Wait for elements and conditions
-- 🎯 **JavaScript execution** - Run custom scripts
+- 🪟 **Window & Frame control** - Resize, maximize, switch windows/frames
+- 🚨 **Alert handling** - Accept, dismiss, get text from alerts
+- ⌨️ **Actions API** - Advanced keyboard and mouse interactions
+- ⏱️ **Smart waits & Timeouts** - Wait for elements, conditions, and configure timeouts
+- 🎯 **JavaScript execution** - Run custom scripts (sync & async)
+- 🔍 **Session management** - Get status, list sessions, manage capabilities
 - 🥷 **Stealth mode** - Hide Selenium from bot detection (enabled by default)
 
 ## Requirements
@@ -48,11 +51,11 @@ composer install
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 // 1. Setup ChromeDriver
-$seleniumDriver = new SeleniumDriver();
+$seleniumDriver = new ChromeDriver();
 $seleniumDriver->initialize();
 
 // 2. Start browser
@@ -86,10 +89,10 @@ $driver->quit();
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 
 // Initialize Chrome driver
-$driver = new SeleniumDriver();
+$driver = new ChromeDriver();
 $driver->initialize();
 
 // Get driver and browser paths
@@ -105,27 +108,13 @@ echo "Chrome: $chromePath\n";
 ```php
 <?php
 
-use Lencls37\PhpSelenium\FirefoxDriver;
+use Lencls37\PhpSelenium\GeckoDriver;
 
-$firefoxDriver = new FirefoxDriver();
+$firefoxDriver = new GeckoDriver();
 $firefoxDriver->initialize();
 
 $driverPath = $firefoxDriver->getDriverPath();
 $firefoxPath = $firefoxDriver->getBrowserPath();
-```
-
-### Edge Support
-
-```php
-<?php
-
-use Lencls37\PhpSelenium\EdgeDriver;
-
-$edgeDriver = new EdgeDriver();
-$edgeDriver->initialize();
-
-$driverPath = $edgeDriver->getDriverPath();
-$edgePath = $edgeDriver->getBrowserPath();
 ```
 
 ## Browser Automation
@@ -352,6 +341,10 @@ $driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
 - ✓ Modifies permission requests
 - ✓ Custom user agent support
 
+## WebDriver Protocol Support
+
+This library implements the complete W3C WebDriver protocol. See [WEBDRIVER_PROTOCOL.md](WEBDRIVER_PROTOCOL.md) for detailed documentation of all supported endpoints and features.
+
 ## How It Works
 
 1. **Chrome Detection**: The library first checks if Chrome/Chromium is installed on your system
@@ -371,10 +364,11 @@ $driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
 ```
 php-selenium/
 ├── src/
-│   ├── SeleniumDriver.php    # Main Chrome driver class
+│   ├── ChromeDriver.php      # Chrome driver class
+│   ├── GeckoDriver.php       # Firefox/Gecko driver class
 │   ├── BrowserDriver.php     # Abstract base class
-│   ├── FirefoxDriver.php     # Firefox support
-│   └── EdgeDriver.php        # Edge support
+│   ├── WebDriver.php         # WebDriver implementation
+│   └── WebElement.php        # WebElement implementation
 ├── drivers/                  # Downloaded drivers (auto-created)
 ├── chrome/                   # Downloaded Chrome (auto-created)
 ├── vendor/                   # Composer dependencies
@@ -461,7 +455,7 @@ The library automatically:
 
 ```php
 try {
-    $driver = new SeleniumDriver();
+    $driver = new ChromeDriver();
     $driver->initialize();
 } catch (RuntimeException $e) {
     echo "Error: " . $e->getMessage();

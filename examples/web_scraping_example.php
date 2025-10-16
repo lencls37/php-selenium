@@ -12,7 +12,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 echo "Web Scraping Example\n";
@@ -21,7 +21,7 @@ echo "====================\n\n";
 try {
     // Setup
     echo "Setting up browser...\n";
-    $seleniumDriver = new SeleniumDriver();
+    $seleniumDriver = new ChromeDriver();
     $seleniumDriver->initialize();
     
     $driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [

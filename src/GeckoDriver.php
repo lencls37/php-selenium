@@ -9,7 +9,7 @@ use ZipArchive;
 /**
  * Firefox/Gecko driver implementation
  */
-class FirefoxDriver extends BrowserDriver
+class GeckoDriver extends BrowserDriver
 {
     private Client $httpClient;
 

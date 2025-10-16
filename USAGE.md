@@ -15,11 +15,11 @@ composer require lencls37/php-selenium
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 // Setup and start browser
-$seleniumDriver = new SeleniumDriver();
+$seleniumDriver = new ChromeDriver();
 $seleniumDriver->initialize();
 
 $driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
@@ -47,9 +47,9 @@ $driver->quit();
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 
-$driver = new SeleniumDriver();
+$driver = new ChromeDriver();
 $driver->initialize();
 
 echo "Driver: " . $driver->getDriverPath() . "\n";
@@ -108,9 +108,9 @@ RuntimeException: Chrome installation cancelled by user.
 ### Chrome/Chromium
 
 ```php
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 
-$driver = new SeleniumDriver();
+$driver = new ChromeDriver();
 $driver->initialize();
 ```
 
@@ -123,24 +123,13 @@ Features:
 ### Firefox
 
 ```php
-use Lencls37\PhpSelenium\FirefoxDriver;
+use Lencls37\PhpSelenium\GeckoDriver;
 
-$driver = new FirefoxDriver();
+$driver = new GeckoDriver();
 $driver->initialize();
 ```
 
 Note: Firefox must be installed manually. Download from https://www.mozilla.org/firefox/
-
-### Microsoft Edge
-
-```php
-use Lencls37\PhpSelenium\EdgeDriver;
-
-$driver = new EdgeDriver();
-$driver->initialize();
-```
-
-Note: Edge must be installed manually. Download from https://www.microsoft.com/edge/
 
 ## Platform-Specific Behavior
 
@@ -201,8 +190,7 @@ your-project/
 │   └── lencls37/php-selenium/
 ├── drivers/
 │   ├── chromedriver       # or chromedriver.exe on Windows
-│   ├── geckodriver        # if Firefox driver installed
-│   └── msedgedriver       # if Edge driver installed
+│   └── geckodriver        # if Firefox driver installed
 ├── chrome/                # if Chrome was downloaded
 │   └── chrome             # or chrome.exe on Windows
 └── composer.json
@@ -214,7 +202,7 @@ your-project/
 
 ```php
 try {
-    $driver = new SeleniumDriver();
+    $driver = new ChromeDriver();
     $driver->initialize();
 } catch (RuntimeException $e) {
     if (str_contains($e->getMessage(), 'cancelled by user')) {
@@ -227,7 +215,7 @@ try {
 
 ```php
 try {
-    $driver = new SeleniumDriver();
+    $driver = new ChromeDriver();
     $driver->initialize();
 } catch (RuntimeException $e) {
     if (str_contains($e->getMessage(), 'Could not find matching ChromeDriver')) {
@@ -240,7 +228,7 @@ try {
 
 ```php
 try {
-    $firefoxDriver = new FirefoxDriver();
+    $firefoxDriver = new GeckoDriver();
     $firefoxDriver->initialize();
 } catch (RuntimeException $e) {
     if (str_contains($e->getMessage(), 'not found')) {
@@ -573,11 +561,11 @@ $allParagraphs = $parent->findElementsByTagName('p');
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 // Setup
-$seleniumDriver = new SeleniumDriver();
+$seleniumDriver = new ChromeDriver();
 $seleniumDriver->initialize();
 
 $driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
@@ -635,11 +623,11 @@ try {
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 // Setup
-$seleniumDriver = new SeleniumDriver();
+$seleniumDriver = new ChromeDriver();
 $seleniumDriver->initialize();
 
 $driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
@@ -765,7 +753,7 @@ echo "Chrome object present: " . ($hasChrome ? 'YES' : 'NO') . "\n";
 ### Check if Driver Already Exists
 
 ```php
-$driver = new SeleniumDriver();
+$driver = new ChromeDriver();
 $driverPath = $driver->getDriverPath();
 
 if (file_exists($driverPath)) {

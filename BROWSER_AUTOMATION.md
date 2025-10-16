@@ -32,11 +32,11 @@ Represents DOM elements and provides methods for:
 
 require_once 'vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 // Setup ChromeDriver
-$seleniumDriver = new SeleniumDriver();
+$seleniumDriver = new ChromeDriver();
 $seleniumDriver->initialize();
 
 // Start browser

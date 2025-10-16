@@ -8,7 +8,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\ChromeDriver;
 use Lencls37\PhpSelenium\WebDriver;
 
 echo "Page Load Wait Example\n";
@@ -17,7 +17,7 @@ echo "======================\n\n";
 try {
     // 1. Setup ChromeDriver
     echo "Setting up ChromeDriver...\n";
-    $seleniumDriver = new SeleniumDriver();
+    $seleniumDriver = new ChromeDriver();
     $seleniumDriver->initialize();
     
     // 2. Start browser in headless mode
