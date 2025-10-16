@@ -8,7 +8,39 @@
 composer require lencls37/php-selenium
 ```
 
-### Basic Usage
+### Quick Start - Browser Automation
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\WebDriver;
+
+// Setup and start browser
+$seleniumDriver = new SeleniumDriver();
+$seleniumDriver->initialize();
+
+$driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
+    'goog:chromeOptions' => [
+        'binary' => $seleniumDriver->getChromePath(),
+        'args' => ['--headless']
+    ]
+]);
+$driver->start();
+
+// Navigate and interact
+$driver->get('https://example.com');
+echo $driver->getTitle() . "\n";
+
+$heading = $driver->findElementByCssSelector('h1');
+echo $heading->getText() . "\n";
+
+$driver->quit();
+```
+
+### Basic Driver Setup Only
 
 ```php
 <?php
@@ -217,6 +249,437 @@ try {
 }
 ```
 
+## Browser Automation Guide
+
+### Finding Elements
+
+The library provides multiple ways to find elements on a page:
+
+#### By CSS Selector
+```php
+// Find single element
+$button = $driver->findElementByCssSelector('#submitBtn');
+$firstLink = $driver->findElementByCssSelector('a.external');
+
+// Find multiple elements
+$links = $driver->findElementsByCssSelector('a');
+$items = $driver->findElementsByCssSelector('.list-item');
+```
+
+#### By XPath
+```php
+// Find by XPath
+$element = $driver->findElementByXPath('//div[@class="content"]');
+$links = $driver->findElementsByXPath('//a[@href]');
+
+// Complex XPath
+$button = $driver->findElementByXPath('//button[contains(text(), "Submit")]');
+```
+
+#### By ID
+```php
+$element = $driver->findElementById('myId');
+// Equivalent to: findElementByCssSelector('#myId')
+```
+
+#### By Name
+```php
+$input = $driver->findElementByName('username');
+$inputs = $driver->findElementsByName('category');
+```
+
+#### By Class Name
+```php
+$element = $driver->findElementByClassName('btn-primary');
+$elements = $driver->findElementsByClassName('product');
+```
+
+#### By Tag Name
+```php
+$heading = $driver->findElementByTagName('h1');
+$paragraphs = $driver->findElementsByTagName('p');
+```
+
+#### By Link Text
+```php
+// Exact match
+$link = $driver->findElementByLinkText('Click here');
+
+// Partial match
+$link = $driver->findElementByPartialLinkText('Click');
+```
+
+### Element Interaction
+
+#### Click
+```php
+$button = $driver->findElementById('submit');
+$button->click();
+```
+
+#### Type Text (Send Keys)
+```php
+$input = $driver->findElementByName('username');
+$input->sendKeys('myusername');
+
+$password = $driver->findElementByName('password');
+$password->sendKeys('mypassword');
+```
+
+#### Clear Input
+```php
+$input = $driver->findElementByName('search');
+$input->clear();
+$input->sendKeys('new search term');
+```
+
+#### Submit Form
+```php
+$searchBox = $driver->findElementByName('q');
+$searchBox->sendKeys('search query');
+$searchBox->submit();
+```
+
+#### Get Element Information
+```php
+// Get text content
+$text = $element->getText();
+
+// Get attribute value
+$href = $link->getAttribute('href');
+$value = $input->getAttribute('value');
+$id = $element->getAttribute('id');
+
+// Get CSS property
+$color = $element->getCssValue('color');
+$fontSize = $element->getCssValue('font-size');
+
+// Get tag name
+$tagName = $element->getTagName(); // e.g., "div", "a", "input"
+```
+
+#### Check Element State
+```php
+// Check if visible
+if ($element->isDisplayed()) {
+    echo "Element is visible\n";
+}
+
+// Check if enabled
+if ($button->isEnabled()) {
+    echo "Button can be clicked\n";
+}
+
+// Check if selected (for checkboxes/radio buttons)
+if ($checkbox->isSelected()) {
+    echo "Checkbox is checked\n";
+}
+```
+
+#### Element Location and Size
+```php
+// Get location (x, y coordinates)
+$location = $element->getLocation();
+echo "X: {$location['x']}, Y: {$location['y']}\n";
+
+// Get size (width, height)
+$size = $element->getSize();
+echo "Width: {$size['width']}, Height: {$size['height']}\n";
+
+// Get both (rectangle)
+$rect = $element->getRect();
+// Returns: ['x' => ..., 'y' => ..., 'width' => ..., 'height' => ...]
+```
+
+### Navigation
+
+```php
+// Navigate to URL
+$driver->get('https://example.com');
+
+// Get current URL
+$currentUrl = $driver->getCurrentUrl();
+
+// Get page title
+$title = $driver->getTitle();
+
+// Go back
+$driver->back();
+
+// Go forward
+$driver->forward();
+
+// Refresh page
+$driver->refresh();
+
+// Get page source HTML
+$html = $driver->getPageSource();
+```
+
+### JavaScript Execution
+
+```php
+// Execute JavaScript and get return value
+$title = $driver->executeScript('return document.title;');
+
+// Execute with arguments
+$result = $driver->executeScript(
+    'return arguments[0] + arguments[1];',
+    [5, 10]
+);
+
+// Scroll to element
+$element = $driver->findElementById('footer');
+$driver->executeScript('arguments[0].scrollIntoView();', [$element->toArray()]);
+
+// Modify page
+$driver->executeScript('document.body.style.backgroundColor = "yellow";');
+
+// Execute async JavaScript
+$driver->executeAsyncScript('
+    var callback = arguments[arguments.length - 1];
+    setTimeout(function() {
+        callback("done");
+    }, 1000);
+');
+```
+
+### Screenshots
+
+```php
+// Take full page screenshot and save
+$driver->saveScreenshot('page.png');
+
+// Get screenshot as base64 string
+$base64Image = $driver->takeScreenshot();
+$imageData = base64_decode($base64Image);
+
+// Take screenshot of specific element
+$element = $driver->findElementById('header');
+$element->saveScreenshot('header.png');
+```
+
+### Window Management
+
+```php
+// Maximize window
+$driver->maximize();
+
+// Minimize window
+$driver->minimize();
+
+// Set custom window size
+$driver->setWindowSize(1920, 1080);
+$driver->setWindowSize(1280, 720);
+
+// Get window size
+$size = $driver->getWindowSize();
+echo "Width: {$size['width']}, Height: {$size['height']}\n";
+```
+
+### Cookie Management
+
+```php
+// Add cookie
+$driver->addCookie([
+    'name' => 'session_id',
+    'value' => 'abc123def456',
+    'path' => '/',
+    'domain' => '.example.com',
+    'secure' => true,
+    'httpOnly' => true
+]);
+
+// Get all cookies
+$cookies = $driver->getCookies();
+foreach ($cookies as $cookie) {
+    echo "Name: {$cookie['name']}\n";
+    echo "Value: {$cookie['value']}\n";
+    echo "Domain: {$cookie['domain']}\n";
+}
+
+// Delete specific cookie
+$driver->deleteCookie('session_id');
+
+// Delete all cookies
+$driver->deleteAllCookies();
+```
+
+### Waits
+
+#### Wait for Element
+```php
+// Wait for element to be present (up to 10 seconds)
+try {
+    $element = $driver->waitForElement('#dynamic-content', 10);
+    echo "Element found!\n";
+} catch (RuntimeException $e) {
+    echo "Element not found after timeout\n";
+}
+
+// Wait for element to be visible
+$element = $driver->waitForElementVisible('#loading-spinner', 5);
+```
+
+#### Wait for Condition
+```php
+// Wait for custom condition
+try {
+    $driver->waitUntil(function($driver) {
+        return $driver->getTitle() === 'Expected Title';
+    }, 10);
+    echo "Condition met!\n";
+} catch (RuntimeException $e) {
+    echo "Condition not met after timeout\n";
+}
+
+// Wait for URL to change
+$driver->waitUntil(function($driver) {
+    return str_contains($driver->getCurrentUrl(), '/success');
+}, 15);
+```
+
+#### Implicit Wait
+```php
+// Set implicit wait (applies to all element finding)
+$driver->implicitWait(5000); // 5 seconds in milliseconds
+
+// Now all findElement calls will wait up to 5 seconds
+$element = $driver->findElementById('dynamic-element');
+```
+
+### Finding Child Elements
+
+```php
+// Find child elements within a parent element
+$parent = $driver->findElementById('parent-container');
+
+// Find child by CSS
+$child = $parent->findElementByCssSelector('.child-item');
+$children = $parent->findElementsByCssSelector('li');
+
+// Find child by XPath (relative)
+$child = $parent->findElementByXPath('.//div[@class="nested"]');
+
+// Find child by tag name
+$firstParagraph = $parent->findElementByTagName('p');
+$allParagraphs = $parent->findElementsByTagName('p');
+```
+
+### Complete Example - Login Flow
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\WebDriver;
+
+// Setup
+$seleniumDriver = new SeleniumDriver();
+$seleniumDriver->initialize();
+
+$driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
+    'goog:chromeOptions' => [
+        'binary' => $seleniumDriver->getChromePath(),
+        'args' => ['--start-maximized']
+    ]
+]);
+$driver->start();
+
+try {
+    // Navigate to login page
+    $driver->get('https://example.com/login');
+    
+    // Wait for page to load
+    $driver->waitForElement('#username', 10);
+    
+    // Fill in login form
+    $username = $driver->findElementById('username');
+    $username->sendKeys('myuser@example.com');
+    
+    $password = $driver->findElementById('password');
+    $password->sendKeys('mypassword');
+    
+    // Submit form
+    $loginButton = $driver->findElementByCssSelector('button[type="submit"]');
+    $loginButton->click();
+    
+    // Wait for redirect
+    $driver->waitUntil(function($driver) {
+        return str_contains($driver->getCurrentUrl(), '/dashboard');
+    }, 10);
+    
+    echo "Login successful!\n";
+    
+    // Take screenshot of dashboard
+    $driver->saveScreenshot('dashboard.png');
+    
+    // Get user info
+    $userMenu = $driver->findElementByCssSelector('.user-menu');
+    echo "Logged in as: " . $userMenu->getText() . "\n";
+    
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    $driver->saveScreenshot('error.png');
+} finally {
+    $driver->quit();
+}
+```
+
+### Complete Example - Web Scraping
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\WebDriver;
+
+// Setup
+$seleniumDriver = new SeleniumDriver();
+$seleniumDriver->initialize();
+
+$driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
+    'goog:chromeOptions' => [
+        'binary' => $seleniumDriver->getChromePath(),
+        'args' => ['--headless', '--disable-gpu']
+    ]
+]);
+$driver->start();
+
+try {
+    // Navigate to page
+    $driver->get('https://example.com/products');
+    
+    // Wait for products to load
+    $driver->waitForElement('.product-item', 10);
+    
+    // Find all products
+    $products = $driver->findElementsByCssSelector('.product-item');
+    
+    echo "Found " . count($products) . " products:\n\n";
+    
+    foreach ($products as $index => $product) {
+        // Get product details
+        $name = $product->findElementByCssSelector('.product-name')->getText();
+        $price = $product->findElementByCssSelector('.product-price')->getText();
+        $link = $product->findElementByCssSelector('a')->getAttribute('href');
+        
+        echo ($index + 1) . ". $name\n";
+        echo "   Price: $price\n";
+        echo "   Link: $link\n\n";
+    }
+    
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+} finally {
+    $driver->quit();
+}
+```
+
 ## Advanced Usage
 
 ### Check if Driver Already Exists
@@ -238,51 +701,7 @@ The library automatically detects the project root and stores:
 - Drivers in `{project_root}/drivers/`
 - Downloaded Chrome in `{project_root}/chrome/`
 
-### Using with php-webdriver
 
-Once setup is complete, use with facebook/php-webdriver:
-
-```php
-use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\Chrome\ChromeOptions;
-
-$driver = new SeleniumDriver();
-$driver->initialize();
-
-// Start ChromeDriver process
-$process = proc_open(
-    [$driver->getDriverPath(), '--port=9515'],
-    [
-        ['pipe', 'r'],
-        ['pipe', 'w'],
-        ['pipe', 'w']
-    ],
-    $pipes
-);
-
-// Wait for driver to start
-sleep(2);
-
-// Connect to ChromeDriver
-$options = new ChromeOptions();
-$options->setBinary($driver->getChromePath());
-
-$capabilities = DesiredCapabilities::chrome();
-$capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
-
-$webDriver = RemoteWebDriver::create(
-    'http://localhost:9515',
-    $capabilities
-);
-
-// Use Selenium
-$webDriver->get('https://www.google.com');
-echo $webDriver->getTitle(); // "Google"
-
-$webDriver->quit();
-proc_close($process);
-```
 
 ## Configuration
 

@@ -10,6 +10,14 @@ Selenium PHP library with automatic Chrome/ChromeDriver setup and multi-browser 
 - 🔧 Optional Firefox and Edge support
 - 💬 Interactive installation prompts
 - ⚡ Version matching between browser and driver
+- 🎮 **Full browser automation** - Control the browser like Selenium
+- 🔍 **Element finding** - CSS selectors, XPath, ID, name, class, etc.
+- 🖱️ **Element interaction** - Click, type, submit forms
+- 📸 **Screenshots** - Full page and element screenshots
+- 🍪 **Cookie management** - Add, get, delete cookies
+- 🪟 **Window control** - Resize, maximize, minimize
+- ⏱️ **Smart waits** - Wait for elements and conditions
+- 🎯 **JavaScript execution** - Run custom scripts
 
 ## Requirements
 
@@ -32,7 +40,45 @@ composer install
 
 ## Usage
 
-### Basic Chrome Setup
+### Quick Start - Browser Automation
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Lencls37\PhpSelenium\SeleniumDriver;
+use Lencls37\PhpSelenium\WebDriver;
+
+// 1. Setup ChromeDriver
+$seleniumDriver = new SeleniumDriver();
+$seleniumDriver->initialize();
+
+// 2. Start browser
+$driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
+    'goog:chromeOptions' => [
+        'binary' => $seleniumDriver->getChromePath(),
+        'args' => ['--headless']  // Run in headless mode
+    ]
+]);
+$driver->start();
+
+// 3. Navigate and interact
+$driver->get('https://example.com');
+echo $driver->getTitle() . "\n";
+
+// 4. Find and interact with elements
+$heading = $driver->findElementByCssSelector('h1');
+echo $heading->getText() . "\n";
+
+// 5. Take screenshot
+$driver->saveScreenshot('screenshot.png');
+
+// 6. Clean up
+$driver->quit();
+```
+
+### Basic Chrome Setup (Driver Only)
 
 ```php
 <?php
@@ -81,6 +127,188 @@ $driverPath = $edgeDriver->getDriverPath();
 $edgePath = $edgeDriver->getBrowserPath();
 ```
 
+## Browser Automation
+
+### Finding Elements
+
+```php
+// By CSS Selector
+$element = $driver->findElementByCssSelector('#myId');
+$elements = $driver->findElementsByCssSelector('.myClass');
+
+// By XPath
+$element = $driver->findElementByXPath('//div[@class="content"]');
+$elements = $driver->findElementsByXPath('//a[@href]');
+
+// By ID, Name, Class, Tag
+$element = $driver->findElementById('myId');
+$element = $driver->findElementByName('username');
+$element = $driver->findElementByClassName('btn');
+$elements = $driver->findElementsByTagName('a');
+
+// By Link Text
+$link = $driver->findElementByLinkText('Click here');
+$link = $driver->findElementByPartialLinkText('Click');
+```
+
+### Interacting with Elements
+
+```php
+// Click an element
+$button = $driver->findElementById('submit');
+$button->click();
+
+// Type text
+$input = $driver->findElementByName('username');
+$input->sendKeys('myusername');
+
+// Clear input field
+$input->clear();
+
+// Submit form
+$input->submit();
+
+// Get element text and attributes
+$text = $element->getText();
+$href = $link->getAttribute('href');
+$cssValue = $element->getCssValue('color');
+
+// Check element state
+if ($element->isDisplayed()) {
+    echo "Element is visible\n";
+}
+if ($element->isEnabled()) {
+    echo "Element is enabled\n";
+}
+if ($checkbox->isSelected()) {
+    echo "Checkbox is checked\n";
+}
+```
+
+### Navigation
+
+```php
+// Navigate to URL
+$driver->get('https://example.com');
+
+// Get current URL and title
+echo $driver->getCurrentUrl() . "\n";
+echo $driver->getTitle() . "\n";
+
+// Navigation commands
+$driver->back();
+$driver->forward();
+$driver->refresh();
+
+// Get page source
+$html = $driver->getPageSource();
+```
+
+### JavaScript Execution
+
+```php
+// Execute JavaScript
+$result = $driver->executeScript('return document.title;');
+
+// Execute with arguments
+$result = $driver->executeScript(
+    'return arguments[0] + arguments[1];',
+    [5, 10]
+); // Returns 15
+
+// Scroll to element
+$driver->executeScript('arguments[0].scrollIntoView();', [$element->toArray()]);
+```
+
+### Screenshots
+
+```php
+// Take full page screenshot
+$driver->saveScreenshot('page.png');
+
+// Get base64 encoded screenshot
+$base64 = $driver->takeScreenshot();
+
+// Take element screenshot
+$element->saveScreenshot('element.png');
+```
+
+### Window Management
+
+```php
+// Maximize window
+$driver->maximize();
+
+// Minimize window
+$driver->minimize();
+
+// Set custom size
+$driver->setWindowSize(1920, 1080);
+
+// Get window size
+$size = $driver->getWindowSize();
+echo "Width: {$size['width']}, Height: {$size['height']}\n";
+```
+
+### Cookie Management
+
+```php
+// Add cookie
+$driver->addCookie([
+    'name' => 'session',
+    'value' => 'abc123'
+]);
+
+// Get all cookies
+$cookies = $driver->getCookies();
+foreach ($cookies as $cookie) {
+    echo "{$cookie['name']}: {$cookie['value']}\n";
+}
+
+// Delete specific cookie
+$driver->deleteCookie('session');
+
+// Delete all cookies
+$driver->deleteAllCookies();
+```
+
+### Waits
+
+```php
+// Wait for element to be present
+$element = $driver->waitForElement('#dynamic-content', 10);
+
+// Wait for element to be visible
+$element = $driver->waitForElementVisible('#loading', 5);
+
+// Wait for custom condition
+$driver->waitUntil(function($driver) {
+    return $driver->getTitle() === 'Expected Title';
+}, 10);
+
+// Set implicit wait
+$driver->implicitWait(5000); // 5 seconds in milliseconds
+```
+
+### Advanced Element Finding
+
+```php
+// Find child elements
+$parent = $driver->findElementById('parent');
+$child = $parent->findElementByCssSelector('.child');
+$children = $parent->findElementsByTagName('li');
+
+// Get element location and size
+$location = $element->getLocation();
+echo "X: {$location['x']}, Y: {$location['y']}\n";
+
+$size = $element->getSize();
+echo "Width: {$size['width']}, Height: {$size['height']}\n";
+
+$rect = $element->getRect();
+// Returns: ['x' => ..., 'y' => ..., 'width' => ..., 'height' => ...]
+```
+
 ## How It Works
 
 1. **Chrome Detection**: The library first checks if Chrome/Chromium is installed on your system
@@ -113,15 +341,33 @@ php-selenium/
 
 ```
 
-## Example
+## Examples
 
-Run the included example:
+### Quick Start Example
+```bash
+php quick_start.php
+```
+Simple example showing basic browser automation.
 
+### Comprehensive Browser Control Example
+```bash
+php browser_control_example.php
+```
+Demonstrates all browser control features including:
+- Element finding (CSS, XPath, ID, etc.)
+- Element interaction (click, type, etc.)
+- JavaScript execution
+- Screenshots
+- Cookie management
+- Window control
+- Navigation
+- Waits
+
+### Driver Setup Example
 ```bash
 php example.php
 ```
-
-This will:
+Shows how to set up ChromeDriver:
 1. Check for Chrome installation
 2. Prompt for download if needed
 3. Set up ChromeDriver
