@@ -51,6 +51,36 @@ Run:
 php examples/stealth_mode_example.php
 ```
 
+### 4. Get HTML Content Example
+**File:** `get_html_example.php`
+
+Demonstrates:
+- Getting HTML source code from web pages
+- Using `getPageSource()` method
+- Using `getHtml()` alias method
+- Extracting information from HTML
+- Saving HTML to file
+
+Run:
+```bash
+php examples/get_html_example.php
+```
+
+### 5. Page Load Wait Example
+**File:** `page_load_wait_example.php`
+
+Demonstrates:
+- Waiting for page to fully load (`waitForPageLoad()`)
+- Waiting for DOM to be ready (`waitForPageReady()`)
+- Waiting for AJAX requests to complete (`waitForAjax()`)
+- Getting HTML after page load
+- Verifying page ready state
+
+Run:
+```bash
+php examples/page_load_wait_example.php
+```
+
 ## Running Examples
 
 All examples require:
@@ -112,9 +142,11 @@ try {
 
 1. **Headless Mode**: Add `'--headless'` to args for running without GUI
 2. **Screenshots**: Use `$driver->saveScreenshot('path.png')` for debugging
-3. **Waits**: Use `$driver->waitForElement()` for dynamic content
-4. **Error Handling**: Always wrap automation in try-catch and call `$driver->quit()`
-5. **Debugging**: Remove `--headless` to see the browser in action
+3. **Wait for Page Load**: Use `$driver->waitForPageLoad()` after navigation to ensure page is fully loaded
+4. **Wait for Elements**: Use `$driver->waitForElement()` for dynamic content
+5. **Get HTML**: Use `$driver->getHtml()` or `$driver->getPageSource()` to get page HTML
+6. **Error Handling**: Always wrap automation in try-catch and call `$driver->quit()`
+7. **Debugging**: Remove `--headless` to see the browser in action
 
 ## Common Issues
 

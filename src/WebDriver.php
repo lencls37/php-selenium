@@ -653,6 +653,97 @@ class WebDriver
     }
 
     /**
+     * Wait for page to fully load (document.readyState === 'complete')
+     * 
+     * @param int $timeoutSeconds Timeout in seconds
+     * @param int $pollIntervalMs Poll interval in milliseconds
+     * @return bool True if page loaded, throws exception on timeout
+     */
+    public function waitForPageLoad(int $timeoutSeconds = 30, int $pollIntervalMs = 100): bool
+    {
+        $endTime = microtime(true) + $timeoutSeconds;
+        
+        while (microtime(true) < $endTime) {
+            try {
+                $readyState = $this->executeScript('return document.readyState;');
+                if ($readyState === 'complete') {
+                    return true;
+                }
+            } catch (RuntimeException $e) {
+                // Page may not be ready yet, continue waiting
+            }
+            usleep($pollIntervalMs * 1000);
+        }
+
+        throw new RuntimeException("Page did not load after {$timeoutSeconds} seconds");
+    }
+
+    /**
+     * Wait for DOM to be ready (document.readyState === 'interactive' or 'complete')
+     * 
+     * @param int $timeoutSeconds Timeout in seconds
+     * @param int $pollIntervalMs Poll interval in milliseconds
+     * @return bool True if DOM is ready, throws exception on timeout
+     */
+    public function waitForPageReady(int $timeoutSeconds = 30, int $pollIntervalMs = 100): bool
+    {
+        $endTime = microtime(true) + $timeoutSeconds;
+        
+        while (microtime(true) < $endTime) {
+            try {
+                $readyState = $this->executeScript('return document.readyState;');
+                if ($readyState === 'interactive' || $readyState === 'complete') {
+                    return true;
+                }
+            } catch (RuntimeException $e) {
+                // Page may not be ready yet, continue waiting
+            }
+            usleep($pollIntervalMs * 1000);
+        }
+
+        throw new RuntimeException("DOM not ready after {$timeoutSeconds} seconds");
+    }
+
+    /**
+     * Wait for jQuery AJAX requests to complete
+     * 
+     * @param int $timeoutSeconds Timeout in seconds
+     * @param int $pollIntervalMs Poll interval in milliseconds
+     * @return bool True if all AJAX requests completed, throws exception on timeout
+     */
+    public function waitForAjax(int $timeoutSeconds = 30, int $pollIntervalMs = 100): bool
+    {
+        $endTime = microtime(true) + $timeoutSeconds;
+        
+        while (microtime(true) < $endTime) {
+            try {
+                // Check if jQuery is available and all AJAX requests are complete
+                $ajaxComplete = $this->executeScript(
+                    'return (typeof jQuery !== "undefined") ? jQuery.active === 0 : true;'
+                );
+                if ($ajaxComplete === true) {
+                    return true;
+                }
+            } catch (RuntimeException $e) {
+                // jQuery may not be available or script error, continue waiting
+            }
+            usleep($pollIntervalMs * 1000);
+        }
+
+        throw new RuntimeException("AJAX requests did not complete after {$timeoutSeconds} seconds");
+    }
+
+    /**
+     * Get HTML content from browser (alias for getPageSource)
+     * 
+     * @return string HTML source code
+     */
+    public function getHtml(): string
+    {
+        return $this->getPageSource();
+    }
+
+    /**
      * Make HTTP request to WebDriver
      * 
      * @param string $method HTTP method
