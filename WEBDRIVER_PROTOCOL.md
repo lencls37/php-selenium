@@ -131,6 +131,10 @@ This document lists all the WebDriver protocol endpoints implemented in this lib
 |--------|----------|-------------|----------------|
 | GET | `/session/{sessionId}` | Get session capabilities | `WebDriver->getCapabilities()` |
 
+## 📝 Log Endpoints (Browser-Specific, Optional)
+
+**Note:** Log endpoints (`/session/{sessionId}/log/types` and `/session/{sessionId}/log`) are browser-specific extensions and not part of the core W3C WebDriver specification. These endpoints are deprecated in modern browsers and are rarely used. For debugging purposes, it's recommended to use browser DevTools or logging mechanisms outside of WebDriver.
+
 ## Additional Features
 
 ### Wait Methods (Higher-level helpers)
