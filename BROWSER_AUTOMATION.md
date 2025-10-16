@@ -286,6 +286,40 @@ $data = $driver->executeScript('return window.appData;');
 
 ## Browser Options
 
+### Stealth Mode (Anti-Bot Detection)
+
+**IMPORTANT: Stealth mode is ENABLED BY DEFAULT!**
+
+Stealth mode helps bypass bot detection systems by hiding automation markers:
+
+```php
+use Lencls37\PhpSelenium\StealthConfig;
+
+// Default - stealth is already enabled
+$driver = new WebDriver($driverPath, 9515, $capabilities);
+
+// Custom stealth configuration
+$stealth = StealthConfig::custom([
+    'hideWebdriver' => true,      // Hide navigator.webdriver
+    'hideAutomation' => true,     // Remove automation flags
+    'userAgent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)...',
+    'disableInfobars' => true,    // Remove automation infobar
+]);
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+
+// Disable stealth (for testing)
+$stealth = StealthConfig::disabled();
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+```
+
+**What stealth mode does:**
+- Hides `navigator.webdriver` property
+- Removes `--enable-automation` flag
+- Adds `window.chrome` object
+- Sets natural-looking plugins and languages
+- Modifies permission request behavior
+- Removes "Chrome is being controlled" infobar
+
 ### Headless Mode
 ```php
 $driver = new WebDriver($driverPath, 9515, [
@@ -316,8 +350,9 @@ $driver = new WebDriver($driverPath, 9515, [
 ]);
 ```
 
-### User Agent
+### User Agent (Manual)
 ```php
+// Note: Use StealthConfig for better stealth
 $driver = new WebDriver($driverPath, 9515, [
     'goog:chromeOptions' => [
         'binary' => $chromePath,

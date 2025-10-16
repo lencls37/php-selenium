@@ -36,6 +36,21 @@ Run:
 php examples/web_scraping_example.php
 ```
 
+### 3. Stealth Mode Example
+**File:** `stealth_mode_example.php`
+
+Demonstrates:
+- Using stealth mode to bypass bot detection (enabled by default)
+- Custom stealth configuration
+- Testing bot detection mechanisms
+- Hiding Selenium from anti-automation systems
+- User agent customization
+
+Run:
+```bash
+php examples/stealth_mode_example.php
+```
+
 ## Running Examples
 
 All examples require:

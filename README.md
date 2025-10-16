@@ -18,6 +18,7 @@ Selenium PHP library with automatic Chrome/ChromeDriver setup and multi-browser 
 - 🪟 **Window control** - Resize, maximize, minimize
 - ⏱️ **Smart waits** - Wait for elements and conditions
 - 🎯 **JavaScript execution** - Run custom scripts
+- 🥷 **Stealth mode** - Hide Selenium from bot detection (enabled by default)
 
 ## Requirements
 
@@ -309,6 +310,37 @@ $rect = $element->getRect();
 // Returns: ['x' => ..., 'y' => ..., 'width' => ..., 'height' => ...]
 ```
 
+### Stealth Mode (Anti-Bot Detection)
+
+**Stealth mode is ENABLED BY DEFAULT** to help bypass bot protection systems:
+
+```php
+use Lencls37\PhpSelenium\StealthConfig;
+
+// Default usage - stealth is already enabled!
+$driver = new WebDriver($driverPath, 9515, $capabilities);
+
+// Custom stealth configuration
+$stealth = StealthConfig::custom([
+    'hideWebdriver' => true,      // Hide navigator.webdriver
+    'hideAutomation' => true,     // Remove automation flags
+    'userAgent' => 'Custom UA',   // Custom user agent
+]);
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+
+// Disable stealth (for testing)
+$stealth = StealthConfig::disabled();
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+```
+
+**Stealth features:**
+- ✓ Hides `navigator.webdriver` property
+- ✓ Removes Chrome automation flags  
+- ✓ Disables "Chrome is being controlled" infobar
+- ✓ Adds natural-looking plugins and languages
+- ✓ Modifies permission requests
+- ✓ Custom user agent support
+
 ## How It Works
 
 1. **Chrome Detection**: The library first checks if Chrome/Chromium is installed on your system
@@ -376,6 +408,12 @@ Shows how to fill and submit forms.
 php examples/web_scraping_example.php
 ```
 Demonstrates data extraction from web pages.
+
+**Stealth Mode:**
+```bash
+php examples/stealth_mode_example.php
+```
+Shows how to bypass bot detection with stealth mode (enabled by default).
 
 See the [examples directory](examples/) for more examples.
 

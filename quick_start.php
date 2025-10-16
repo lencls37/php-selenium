@@ -20,8 +20,8 @@ try {
     $seleniumDriver = new SeleniumDriver();
     $seleniumDriver->initialize();
     
-    // 2. Start browser
-    echo "Starting browser...\n";
+    // 2. Start browser (stealth mode is enabled by default!)
+    echo "Starting browser with stealth mode...\n";
     $driver = new WebDriver($seleniumDriver->getDriverPath(), 9515, [
         'goog:chromeOptions' => [
             'binary' => $seleniumDriver->getChromePath(),

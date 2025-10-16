@@ -682,6 +682,86 @@ try {
 
 ## Advanced Usage
 
+### Stealth Mode (Anti-Bot Protection)
+
+**Stealth mode is ENABLED BY DEFAULT** to help bypass bot detection systems.
+
+#### Default Stealth Mode (Automatic)
+
+```php
+use Lencls37\PhpSelenium\WebDriver;
+
+// Stealth is enabled automatically - no configuration needed!
+$driver = new WebDriver($driverPath, 9515, [
+    'goog:chromeOptions' => [
+        'binary' => $chromePath,
+        'args' => ['--headless']
+    ]
+]);
+$driver->start();
+
+// Your automation is now protected from common bot detection
+$driver->get('https://example.com');
+```
+
+#### Custom Stealth Configuration
+
+```php
+use Lencls37\PhpSelenium\StealthConfig;
+
+// Create custom stealth configuration
+$stealth = StealthConfig::custom([
+    'enabled' => true,
+    'hideWebdriver' => true,        // Hide navigator.webdriver
+    'hideAutomation' => true,       // Remove automation flags
+    'userAgent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...',
+    'disableInfobars' => true,      // Remove "Chrome is being controlled"
+    'excludeSwitches' => true,      // Exclude automation switches
+    'modifyPermissions' => true     // Modify permission behavior
+]);
+
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+$driver->start();
+```
+
+#### Disable Stealth Mode
+
+```php
+// For testing or when you don't need stealth
+$stealth = StealthConfig::disabled();
+$driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
+```
+
+#### What Stealth Mode Does
+
+1. **Hides navigator.webdriver**: The most common detection method
+2. **Removes automation flags**: Disables `--enable-automation` and similar
+3. **Adds chrome object**: Makes `window.chrome` available
+4. **Natural plugins**: Adds realistic plugin count
+5. **Natural languages**: Sets `navigator.languages` properly
+6. **Modifies permissions**: Makes permission requests appear natural
+7. **Custom user agent**: Optional custom UA string
+8. **Disables infobars**: Removes "Chrome is being controlled" message
+
+#### Testing Stealth Mode
+
+```php
+// Check if webdriver is hidden
+$isHidden = $driver->executeScript('return navigator.webdriver === undefined;');
+echo "Stealth active: " . ($isHidden ? 'YES' : 'NO') . "\n";
+
+// Check Chrome object
+$hasChrome = $driver->executeScript('return typeof window.chrome !== "undefined";');
+echo "Chrome object present: " . ($hasChrome ? 'YES' : 'NO') . "\n";
+```
+
+#### Best Practices
+
+1. **Keep stealth enabled by default** - It doesn't hurt and helps with most sites
+2. **Use custom user agents** for specific sites that check UA strings
+3. **Test with disabled stealth** if you suspect the stealth is causing issues
+4. **Combine with other techniques** like random delays and natural mouse movements
+
 ### Check if Driver Already Exists
 
 ```php

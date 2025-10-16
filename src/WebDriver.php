@@ -17,6 +17,7 @@ class WebDriver
     private ?string $sessionId = null;
     private $driverProcess = null;
     private array $driverPipes = [];
+    private StealthConfig $stealthConfig;
 
     /**
      * Create a new WebDriver instance
@@ -24,11 +25,13 @@ class WebDriver
      * @param string $driverPath Path to the WebDriver executable (chromedriver, geckodriver, etc.)
      * @param int $port Port to run the WebDriver server on
      * @param array $capabilities Browser capabilities
+     * @param StealthConfig|null $stealthConfig Stealth configuration (default: enabled)
      */
     public function __construct(
         private string $driverPath,
         private int $port = 9515,
-        private array $capabilities = []
+        private array $capabilities = [],
+        ?StealthConfig $stealthConfig = null
     ) {
         $this->serverUrl = "http://localhost:{$this->port}";
         $this->httpClient = new Client([
@@ -36,6 +39,9 @@ class WebDriver
             'verify' => false,
             'http_errors' => false
         ]);
+        
+        // Use default stealth config if none provided (enabled by default)
+        $this->stealthConfig = $stealthConfig ?? StealthConfig::default();
     }
 
     /**
@@ -51,6 +57,9 @@ class WebDriver
 
         // Create session
         $this->createSession();
+        
+        // Apply stealth scripts if enabled
+        $this->applyStealthMode();
     }
 
     /**
@@ -82,14 +91,27 @@ class WebDriver
      */
     private function createSession(): void
     {
+        // Prepare base capabilities
+        $baseCaps = [
+            'browserName' => 'chrome',
+            'goog:chromeOptions' => [
+                'args' => []
+            ]
+        ];
+        
+        // Merge with user-provided capabilities
+        $caps = array_merge($baseCaps, $this->capabilities);
+        
+        // Apply stealth options to Chrome options
+        if (isset($caps['goog:chromeOptions']) && $this->stealthConfig->isEnabled()) {
+            $caps['goog:chromeOptions'] = $this->stealthConfig->mergeWithChromeOptions(
+                $caps['goog:chromeOptions']
+            );
+        }
+        
         $response = $this->request('POST', '/session', [
             'capabilities' => [
-                'alwaysMatch' => array_merge([
-                    'browserName' => 'chrome',
-                    'goog:chromeOptions' => [
-                        'args' => []
-                    ]
-                ], $this->capabilities)
+                'alwaysMatch' => $caps
             ]
         ]);
 
@@ -98,6 +120,26 @@ class WebDriver
         }
 
         $this->sessionId = $response['value']['sessionId'];
+    }
+    
+    /**
+     * Apply stealth mode JavaScript to hide Selenium detection
+     */
+    private function applyStealthMode(): void
+    {
+        if (!$this->stealthConfig->isEnabled()) {
+            return;
+        }
+        
+        $script = $this->stealthConfig->getStealthScript();
+        if (!empty($script)) {
+            try {
+                $this->executeScript($script);
+            } catch (\Exception $e) {
+                // Silently fail if stealth script injection fails
+                // to not break the session
+            }
+        }
     }
 
     /**
@@ -110,6 +152,9 @@ class WebDriver
         $this->request('POST', "/session/{$this->sessionId}/url", [
             'url' => $url
         ]);
+        
+        // Re-apply stealth mode after navigation
+        $this->applyStealthMode();
     }
 
     /**
@@ -414,6 +459,8 @@ class WebDriver
     public function back(): void
     {
         $this->request('POST', "/session/{$this->sessionId}/back");
+        // Re-apply stealth mode after navigation
+        $this->applyStealthMode();
     }
 
     /**
@@ -422,6 +469,8 @@ class WebDriver
     public function forward(): void
     {
         $this->request('POST', "/session/{$this->sessionId}/forward");
+        // Re-apply stealth mode after navigation
+        $this->applyStealthMode();
     }
 
     /**
@@ -430,6 +479,8 @@ class WebDriver
     public function refresh(): void
     {
         $this->request('POST', "/session/{$this->sessionId}/refresh");
+        // Re-apply stealth mode after page refresh
+        $this->applyStealthMode();
     }
 
     /**
@@ -636,6 +687,14 @@ class WebDriver
     public function getSessionId(): ?string
     {
         return $this->sessionId;
+    }
+    
+    /**
+     * Get stealth configuration
+     */
+    public function getStealthConfig(): StealthConfig
+    {
+        return $this->stealthConfig;
     }
 
     /**
