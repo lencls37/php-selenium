@@ -420,6 +420,12 @@ php examples/web_scraping_example.php
 ```
 Demonstrates data extraction from web pages.
 
+**Get HTML Content:**
+```bash
+php examples/get_html_example.php
+```
+Shows how to retrieve HTML content from web pages.
+
 **Stealth Mode:**
 ```bash
 php examples/stealth_mode_example.php
