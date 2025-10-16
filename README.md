@@ -343,7 +343,20 @@ $driver = new WebDriver($driverPath, 9515, $capabilities, $stealth);
 
 ## WebDriver Protocol Support
 
-This library implements the complete W3C WebDriver protocol. See [WEBDRIVER_PROTOCOL.md](WEBDRIVER_PROTOCOL.md) for detailed documentation of all supported endpoints and features.
+This library implements the complete W3C WebDriver protocol, including:
+- Session management (create, list, close sessions)
+- Navigation (navigate, back, forward, refresh)
+- Element finding (CSS selectors, XPath, ID, name, class, tag, link text)
+- Element interaction (click, type, clear, submit)
+- JavaScript execution (sync and async)
+- Screenshots (full page and element)
+- Window management (resize, maximize, minimize)
+- Cookie management (add, get, delete)
+- Frame and window switching
+- Alert handling
+- Timeouts and waits
+
+For more details, see the [W3C WebDriver Specification](https://www.w3.org/TR/webdriver/).
 
 ## How It Works
 
